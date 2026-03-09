@@ -1,0 +1,1 @@
+{"window_size": 500, "step": 100, "arch": "cnn_bilstm", "class_names": ["EPSP", "PS"]}
