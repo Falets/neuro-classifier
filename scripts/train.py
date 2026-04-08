@@ -12,8 +12,20 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=None)
     parser.add_argument('--batch_size', type=int, default=None)
     parser.add_argument('--lr', type=float, default=None)
+    parser.add_argument('--dropout', type=float, default=0.3)
+    parser.add_argument('--l2', type=float, default=1e-4)
+    parser.add_argument('--experiment_name', default='exp')
     args = parser.parse_args()
-    train(arch=args.arch, data_folder=args.data_folder,
-          window_size=args.window_size, step=args.step,
-          model_path=args.model_path, epochs=args.epochs,
-          batch_size=args.batch_size, lr=args.lr)
+    train(
+        arch=args.arch,
+        data_folder=args.data_folder,
+        window_size=args.window_size,
+        step=args.step,
+        model_path=args.model_path,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        lr=args.lr,
+        dropout=args.dropout,
+        l2_reg=args.l2_reg,
+        experiment_name=args.experiment_name
+    )
