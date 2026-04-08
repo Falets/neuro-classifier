@@ -1,0 +1,11 @@
+{
+  "arch": "lstm_deeper",
+  "window_size": 500,
+  "step": 100,
+  "epochs": 30,
+  "batch_size": 32,
+  "lr": 0.001,
+  "test_accuracy": 0.920265780730897,
+  "best_val_accuracy": 0.8970099687576294,
+  "best_val_loss": 0.3594434857368469
+}

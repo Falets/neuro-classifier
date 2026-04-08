@@ -1,0 +1,11 @@
+{
+  "arch": "cnn_deeper",
+  "window_size": 500,
+  "step": 100,
+  "epochs": 30,
+  "batch_size": 32,
+  "lr": 0.0003,
+  "test_accuracy": 0.9900332225913622,
+  "best_val_accuracy": 0.9966777563095093,
+  "best_val_loss": 0.11946957558393478
+}

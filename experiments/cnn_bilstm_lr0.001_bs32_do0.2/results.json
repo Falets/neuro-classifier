@@ -1,0 +1,11 @@
+{
+  "arch": "cnn_bilstm",
+  "window_size": 500,
+  "step": 100,
+  "epochs": 30,
+  "batch_size": 32,
+  "lr": 0.001,
+  "test_accuracy": 1.0,
+  "best_val_accuracy": 1.0,
+  "best_val_loss": 0.15538915991783142
+}

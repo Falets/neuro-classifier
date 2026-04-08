@@ -1,0 +1,9 @@
+{
+  "window_size": 500,
+  "step": 100,
+  "arch": "lstm_deeper",
+  "class_names": [
+    "EPSP",
+    "PS"
+  ]
+}

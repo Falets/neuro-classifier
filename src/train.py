@@ -103,4 +103,11 @@ def train(arch='cnn_deeper', data_folder=None, window_size=None, step=None,
     utils.save_classification_report(y_test, y_pred, Config.CLASS_NAMES, str(experiment_dir / "report.txt"))
 
     print(f"Модель сохранена в {model_path}")
-    return model, history, (X_test, y_test, y_pred)
+    return {
+        "model": model,
+        "history": history,
+        "X_test": X_test,
+        "y_test": y_test,
+        "y_pred": y_pred,
+        **results
+    }

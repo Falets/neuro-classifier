@@ -1,0 +1,8 @@
+              precision    recall  f1-score   support
+
+        EPSP     0.9018    0.6689    0.7681       151
+          PS     0.7354    0.9267    0.8201       150
+
+    accuracy                         0.7973       301
+   macro avg     0.8186    0.7978    0.7941       301
+weighted avg     0.8189    0.7973    0.7940       301
