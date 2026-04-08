@@ -2,13 +2,16 @@ import os
 import json
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 from tensorflow.keras import callbacks
 from . import models, utils, data_loader
 from .config import Config
+from tensorflow import keras
 
-def train(arch='cnn_simple', data_folder=None, window_size=None, step=None,
+
+def train(arch='cnn_deeper', data_folder=None, window_size=None, step=None,
           model_path='best_model.keras', epochs=None, batch_size=None, lr=None):
-    # Используем значения из Config, если не переданы явно
+
     data_folder = data_folder or Config.DATA_FOLDER
     window_size = window_size or Config.WINDOW_SIZE
     step = step or Config.STEP
@@ -19,11 +22,18 @@ def train(arch='cnn_simple', data_folder=None, window_size=None, step=None,
     print("Загрузка данных...")
     X, y = data_loader.load_data_from_folder(data_folder, window_size, step)
     print(f"Всего окон: {X.shape[0]}")
+
     X_norm = utils.normalize_windows(X)
     X_norm = X_norm[..., np.newaxis]
 
-    X_train, X_val, y_train, y_val = train_test_split(
-        X_norm, y, test_size=0.2, stratify=y, random_state=42
+    # 1) train + temp
+    X_train, X_temp, y_train, y_temp = train_test_split(
+        X_norm, y, test_size=0.3, stratify=y, random_state=42
+    )
+
+    # 2) val + test
+    X_val, X_test, y_val, y_test = train_test_split(
+        X_temp, y_temp, test_size=0.5, stratify=y_temp, random_state=42
     )
 
     build_fn = getattr(models, f'build_{arch}')
@@ -34,13 +44,35 @@ def train(arch='cnn_simple', data_folder=None, window_size=None, step=None,
         callbacks.ModelCheckpoint(model_path, save_best_only=True, monitor='val_accuracy')
     ]
 
-    history = model.fit(X_train, y_train, validation_data=(X_val, y_val),
-                        epochs=epochs, batch_size=batch_size, callbacks=callbacks_list, verbose=1)
+    history = model.fit(
+        X_train, y_train,
+        validation_data=(X_val, y_val),
+        epochs=epochs,
+        batch_size=batch_size,
+        callbacks=callbacks_list,
+        verbose=1
+    )
 
-    # Сохраняем метаданные
-    meta = {'window_size': window_size, 'step': step, 'arch': arch, 'class_names': Config.CLASS_NAMES}
-    with open(model_path.replace('.keras', '_meta.json'), 'w') as f:
-        json.dump(meta, f)
+    model = keras.models.load_model(model_path)
+
+    y_prob = model.predict(X_test, verbose=0)
+    y_pred = np.argmax(y_prob, axis=1)
+
+    test_acc = np.mean(y_pred == y_test)
+    print(f"Test accuracy: {test_acc:.4f}")
+
+    meta = {
+        'window_size': window_size,
+        'step': step,
+        'arch': arch,
+        'class_names': Config.CLASS_NAMES
+    }
+    with open(model_path.replace('.keras', '_meta.json'), 'w', encoding='utf-8') as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
 
     utils.plot_history(history, model_path.replace('.keras', '_history.png'))
+    utils.plot_confusion(y_test, y_pred, Config.CLASS_NAMES, model_path.replace('.keras', '_cm.png'))
+    utils.save_classification_report(y_test, y_pred, Config.CLASS_NAMES, model_path.replace('.keras', '_report.txt'))
+
     print(f"Модель сохранена в {model_path}")
+    return model, history, (X_test, y_test, y_pred)

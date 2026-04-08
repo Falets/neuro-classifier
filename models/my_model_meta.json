@@ -1,1 +1,0 @@
-{"window_size": 500, "step": 100, "arch": "cnn_deeper", "class_names": ["EPSP", "PS"]}
