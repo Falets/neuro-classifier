@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import argparse
 from src.predict import predict_one_file
 
